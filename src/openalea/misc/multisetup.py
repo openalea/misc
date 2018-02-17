@@ -240,7 +240,7 @@ class Multisetup(object):
         else:
             bold = purple = red = green = underline = str
 
-        print bold("Running multisetup version %s" % __revision__.split()[2])
+        print bold("Running multisetup version ")
 
         project_dir = self.curdir.basename()
         directories = [self.curdir.joinpath(package) for package in self.packages]
