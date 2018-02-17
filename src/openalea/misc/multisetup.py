@@ -236,6 +236,7 @@ class Multisetup(object):
             if not color_terminal():
                 # Windows' poor cmd box doesn't understand ANSI sequences
                 nocolor()
+                bold = purple = red = green = underline = str
         else:
             bold = purple = red = green = underline = str
 
@@ -244,7 +245,7 @@ class Multisetup(object):
         project_dir = self.curdir.basename()
         directories = [self.curdir.joinpath(package) for package in self.packages]
 
-        print 'Will process the following directories: ',
+        print('Will process the following directories: ',)
         for directory in directories:
             print bold(directory.basename()),
         print ''
