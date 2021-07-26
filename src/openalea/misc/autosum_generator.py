@@ -18,7 +18,7 @@ Small functions to manipulate autosum files
 """
 
 from os.path import join,dirname,basename,splitext
-from list_modules import list_modules
+from .list_modules import list_modules
 
 def generate_autosum (user_doc_path) :
 	"""Generate an autosum file
@@ -62,7 +62,7 @@ Reference guide
 	
 	for mod_dec in modules :
 		full_mod_name = ".".join(mod_dec)
-		print full_mod_name
+		print(full_mod_name)
 		txt += """
 .. currentmodule:: openalea.%s
 """ % full_mod_name

@@ -5,12 +5,12 @@ import os, subprocess
 from types import ModuleType
 from collections import Sequence
 from tempfile import NamedTemporaryFile
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from datetime import datetime
-from exceptions import StandardError
+from exceptions import Exception
 from path import Path
 
-class MetainfoError(StandardError):
+class MetainfoError(Exception):
   """Class for exceptions raised during metainfo extraction
   """
 
@@ -28,9 +28,9 @@ def generate_headers(mod, patterns=['*.py', '*.h', '*.c*'], tab='  '):
   """
   if not isinstance(patterns, Sequence):
       raise TypeError('`patterns` parameter')
-  if not all([isinstance(pattern, basestring) for pattern in patterns]):
+  if not all([isinstance(pattern, str) for pattern in patterns]):
       raise ValueError('`patterns` parameter')
-  if not isinstance(tab, basestring):
+  if not isinstance(tab, str):
     raise TypeError('`tab` parameter')
   if not isinstance(mod, ModuleType):
     raise TypeError('`mod` parameter')
@@ -39,7 +39,7 @@ def generate_headers(mod, patterns=['*.py', '*.h', '*.c*'], tab='  '):
     if len(rootpath) > 1:
       raise ValueError('`mod` parameter')
     rootpath = rootpath[0]
-  if not isinstance(rootpath, basestring):
+  if not isinstance(rootpath, str):
     raise ValueError('`mod` parameter')
   rootpath = Path(rootpath)
 

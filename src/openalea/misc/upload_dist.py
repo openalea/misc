@@ -92,7 +92,7 @@ class UploadDistributionToGForge(object):
         """login into gforge"""
        
         if self.verbose:
-            print 'Trying to log in...',
+            print('Trying to log in...', end=' ')
         if login and password:
             self.gforge.login(login, password)
         else:
@@ -103,14 +103,14 @@ class UploadDistributionToGForge(object):
             self.error('Could not connect to the gforge. Check login and passwd')
         else:
             if self.verbose:
-                print 'connection succeeded.' 
+                print('connection succeeded.') 
         
     def logout(self):
         self.gforge.logout()
 
     def error(self, msg):
         """Simple error message that also logout"""
-        print "Logging out."
+        print("Logging out.")
         self.logout()
         ValueError(msg)
         
@@ -135,9 +135,9 @@ class UploadDistributionToGForge(object):
         if self.release_id == -1:
              
             _releases = self.gforge.get_releases(self.project, self.package)
-            print self.project
-            print self.package
-            print _releases
+            print(self.project)
+            print(self.package)
+            print(_releases)
             self.release_id = self.gforge.get_release_id(self.project, 
                                                          self.package_id,
                                                          max(_releases))
@@ -193,7 +193,7 @@ class UploadDistributionToGForge(object):
         extension = os.path.splitext(filename)[1]
         if filename.endswith('tar.gz'):
             self.file_type = 'tar.gz'            
-        elif extension in type_id.keys():
+        elif extension in list(type_id.keys()):
             self.file_type = extension
         else:
             self.file_type = 'other'
@@ -210,27 +210,27 @@ class UploadDistributionToGForge(object):
                         'VPlants.PlantGL':'VPlants'
                         }
         guess = os.path.basename(filename).split('-')[0]
-        print guess
+        print(guess)
         
-        if guess in _package_map.keys():
+        if guess in list(_package_map.keys()):
             if self.verbose:
-                print 'Found %s in the list package_map. Need to be fixed !!' \
-                    % guess
+                print('Found %s in the list package_map. Need to be fixed !!' \
+                    % guess)
             guess = _package_map[guess]
         
         elif guess in self.packages:
             if self.verbose:
-                print 'Found %s in the list of official packages.continue...' \
-                    % guess
+                print('Found %s in the list of official packages.continue...' \
+                    % guess)
         elif guess.startswith('VPlants'):
             if self.verbose:
-                print 'Found %s as a VPlants package. Need to be fixed !!' \
-                    % guess
+                print('Found %s as a VPlants package. Need to be fixed !!' \
+                    % guess)
             guess = 'VPlants'
         elif guess.startswith('Alinea'):
             if self.verbose:
-                print 'Found %s as an Alinea package. Need to be fixed !!' \
-                    % guess
+                print('Found %s as an Alinea package. Need to be fixed !!' \
+                    % guess)
             guess = 'Alinea'
         
         else:
@@ -244,8 +244,8 @@ class UploadDistributionToGForge(object):
     def delete_file(self, filename=None, package=None, release=None):
         """todo:check pacakge release"""
         
-        print 'Removing the following file from the gforge:',
-        print self.filename
+        print('Removing the following file from the gforge:', end=' ')
+        print(self.filename)
         
         
         if self.replace_files == True:
@@ -254,8 +254,8 @@ class UploadDistributionToGForge(object):
             self.get_file_id()
         else:
             
-            print """WARNINGS:: File found on the GForge. Not replaced. 
-If you want to replace it, use the --replace-files option"""
+            print("""WARNINGS:: File found on the GForge. Not replaced. 
+If you want to replace it, use the --replace-files option""")
         return
     
     def upload_file(self, filename=None, package=None, 
@@ -263,7 +263,7 @@ If you want to replace it, use the --replace-files option"""
         """package must be in get_packages
         gforge.upload_file("filename.egg", "VPlants", "0.7")
         """
-        print '============================================= Uploading new file' 
+        print('============================================= Uploading new file') 
         # overwrite release if required
         if user_release:
             self.get_release_id(package, user_release)
@@ -285,9 +285,9 @@ If you want to replace it, use the --replace-files option"""
 
         
         if verbose:
-            print self
-            print 'File type is %s' % self.file_type
-            print 'Processor type is %s' % self.proc_type
+            print(self)
+            print('File type is %s' % self.file_type)
+            print('Processor type is %s' % self.proc_type)
             
         # file already present 
         if self.file_id != -1:
@@ -298,7 +298,7 @@ If you want to replace it, use the --replace-files option"""
         # it is == to -1
         if self.file_id == -1:
             #here we use filename because we need the whole pathname
-            if os.path.getsize(filename)> 2000000L:
+            if os.path.getsize(filename)> 2000000:
                self.gforge.add_big_file(self.project, self.package,
                                      self.release,
                                      filename,

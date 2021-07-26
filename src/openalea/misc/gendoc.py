@@ -38,7 +38,7 @@ def run(cmd, verbose=True, test=True):
     that will be run without launching them.
     """
     if verbose:
-        print cmd
+        print(cmd)
     if not test:
         os.system(cmd)
 
@@ -96,7 +96,7 @@ class GenDoc():
                 + "-%s"%(version) # where to copy the API
         else:
             self.outdir = self.parent + '/doc/'
-            print self.outdir
+            print(self.outdir)
 
     def getModulePath(self, module):
         """Returns the module's path"""
@@ -117,7 +117,7 @@ class GenDoc():
         from path import Path
 
         for module in self.list_module:
-            print 'Globbing files in %s.' % module
+            print('Globbing files in %s.' % module)
             module_path = self.getModulePath(module)
             directory = Path(module_path)
             files_in_this_module = directory.walkfiles('*.py')
@@ -181,9 +181,9 @@ def ParseParameters():
     (opts, args) = parser.parse_args()
     #checking
     if not os.path.isdir(opts.parent_directory):
-         raise ValueError, "--parent-directory must be a valid directory"
+         raise ValueError("--parent-directory must be a valid directory")
     if not opts.module or not opts.parent_directory:
-         raise ValueError, "--parent-directory and --module must be provided"
+         raise ValueError("--parent-directory and --module must be provided")
     return opts, args
 
 
@@ -198,19 +198,19 @@ if __name__ == '__main__':
 
 
     # the actual commands
-    print '=================Starting EPYDOC command=============== '
+    print('=================Starting EPYDOC command=============== ')
     if not opts.skip_html:
         run('epydoc %s -o %s %s  ' % (factory.options, factory.outdir, factory.files),
             verbose=opts.verbose, test=opts.test)
 
-    print '=================Starting EPYDOC command=============== '
+    print('=================Starting EPYDOC command=============== ')
     if not opts.skip_pdf:
         run('epydoc %s -o %s %s --pdf ' %
             (factory.options.replace('--include-log', ''),
             factory.outdir, factory.files),
             verbose=opts.verbose, test=opts.test)
 
-    print '=================Starting SCP command=============== '
+    print('=================Starting SCP command=============== ')
     # once done, we can scp the documentation
     if not opts.skip_scp:
         run('scp -r %s scm.gforge.inria.fr:/home/groups/openalea/htdocs/doc/'

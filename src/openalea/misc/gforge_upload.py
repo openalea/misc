@@ -85,11 +85,11 @@ class Uploader(object):
         self.mylogin()
 
     def info(self):
-        print 'GFORGE Uploading -----------------------------------'
-        print 'Project: %s' % self.project
-        print 'Package: %s' % self.package
-        print 'Release: %s' % self.release
-        print 'Filname(s): %s' %  self.glob
+        print('GFORGE Uploading -----------------------------------')
+        print('Project: %s' % self.project)
+        print('Package: %s' % self.package)
+        print('Release: %s' % self.release)
+        print('Filname(s): %s' %  self.glob)
 
     def mylogin(self):
         """  Open a session """        
@@ -123,9 +123,9 @@ class Uploader(object):
         msg = '%s in the ' % element_name + elements + ' are :'
         underscore = '-' * len(msg)
         tab = '  '
-        print msg
-        print underscore
-        print tab + ('\n' + tab).join(elt)
+        print(msg)
+        print(underscore)
+        print(tab + ('\n' + tab).join(elt))
 
 
     def ask(self, question):
@@ -136,7 +136,7 @@ class Uploader(object):
 
         """
         if self.interactive:
-            ok = raw_input(question + " [y/n]  ")
+            ok = input(question + " [y/n]  ")
             return ok.lower() == 'y'
         else:
             return True
@@ -151,7 +151,7 @@ class Uploader(object):
         """
         f = os.path.splitext(filename)
         ft = f[1]
-        if ft not in type_id.keys():
+        if ft not in list(type_id.keys()):
             ft = 'other'
         return ft
 
@@ -175,7 +175,7 @@ class Uploader(object):
 
     def check_project(self):
         if self.project not in self.available_project:
-            print 'Error command : project must be either %s' % self.available_project
+            print('Error command : project must be either %s' % self.available_project)
             sys.exit(0)
 
 
@@ -184,13 +184,13 @@ class Uploader(object):
         msg += purple('Shall we add %s package in %s project ? ' % (self.package, self.project))
         if self.ask(msg):
             if self.dry_run:
-                print 'Action skipped'
+                print('Action skipped')
                 pass
             else:
                 self.server.add_package(self.project, self.package)
-                print '%s package has been created on the server' % self.package
+                print('%s package has been created on the server' % self.package)
         else:
-            print 'quitting'
+            print('quitting')
             self.server.logout()
             sys.exit()
 
@@ -201,15 +201,15 @@ class Uploader(object):
         packages.sort()
         self.server_packages = packages
         if self.package is None or self.package.startswith('-'):
-            print red('you must provide a valid package with --package. Available packages are %s' % self.server_packages)
+            print(red('you must provide a valid package with --package. Available packages are %s' % self.server_packages))
             sys.exit(0)
         if self.package not in self.server_packages:
             if self.mode == 'add':
                 self.add_package()
             else:
-                print red('Check your package name. Available packages are')
+                print(red('Check your package name. Available packages are'))
                 for package in packages:
-                    print '\t %s'  % package
+                    print('\t %s'  % package)
                 sys.exit(0)
 
     def add_release(self):
@@ -217,13 +217,13 @@ class Uploader(object):
         msg += purple('Shall we add it the release %s release in %s package' % (self.release, self.package))
         if self.ask(msg):
             if self.dry_run:
-                print 'Action skipped'
+                print('Action skipped')
                 pass
             else:
                 self.server.add_release(self.project, self.package, self.release, 'notes', 'changes')
-                print '%s release has been created on the server' % self.release
+                print('%s release has been created on the server' % self.release)
         else:
-            print 'quitting'
+            print('quitting')
             self.server.logout()
 
     def remove_file(self, file):
@@ -235,10 +235,10 @@ class Uploader(object):
 
             else:
                 self.server.remove_file(self.project, self.package, self.release, os.path.basename(file))
-            print '%s removed' % os.path.basename(file)
+            print('%s removed' % os.path.basename(file))
             return True
         else:
-            print '%s not deleted as requested' % file
+            print('%s not deleted as requested' % file)
             return False
 
 
@@ -250,15 +250,15 @@ class Uploader(object):
             if self.dry_run:
                 pass
             else:
-                if os.path.getsize(file) > 2000000L:
+                if os.path.getsize(file) > 2000000:
                     self.server.add_big_file(self.project, self.package, self.release, 
                         file, p_type, f_type)
                 else:
                     res = self.server.add_file(self.project, self.package, self.release, 
                         file, p_type, f_type)
-            print '%s file has been uploaded on the server (in %s)' % (os.path.basename(file), self.get_location())
+            print('%s file has been uploaded on the server (in %s)' % (os.path.basename(file), self.get_location()))
         else:
-            print '%s not uploaded as requested' % file
+            print('%s not uploaded as requested' % file)
 
 
     def check_releases(self):
@@ -266,22 +266,22 @@ class Uploader(object):
         releases.sort()
         self.server_releases = releases
         if self.release is None:
-            print 'you must provide release with --release. Available releases are %s' % self.server_releases
+            print('you must provide release with --release. Available releases are %s' % self.server_releases)
             sys.exit(0)
         if self.release not in self.server_releases:
             if self.mode == 'add':
                 self.add_release()
             else:
-                print red('Check your release name. Available releases are')
+                print(red('Check your release name. Available releases are'))
                 for release in releases:
-                    print '\t %s'  % release
+                    print('\t %s'  % release)
                 sys.exit(0)
 
     def check_files(self):
         files = server.get_files(self.project, self.package, self.release)
         self.server_files = files 
         if self.filename is None:
-            print 'you must provide a glob filename with --glob. quitting'
+            print('you must provide a glob filename with --glob. quitting')
             sys.exit(0)
 
 
@@ -303,23 +303,23 @@ class Uploader(object):
             self.check_packages()
             self.check_releases()
             files = server.get_files(self.project, self.package, self.release)
-            print 'Found %s files in %s :'  % ( len(files), self.get_location())
+            print('Found %s files in %s :'  % ( len(files), self.get_location()))
             files.sort()
             for file in files:
-                print '\t %s' %  file
+                print('\t %s' %  file)
         elif self.package:
             self.check_packages()
             releases = server.get_releases(self.project, self.package)
-            print 'Found %s releases in %s/%s :'  % ( len(releases), self.project, self.package)
+            print('Found %s releases in %s/%s :'  % ( len(releases), self.project, self.package))
             releases.sort()
             for release in releases:
-                print '\t %s'  % release
+                print('\t %s'  % release)
         else:
             packages = server.get_packages(self.project)
-            print 'Found %s packages in %s :'  % ( len(packages), self.project) 
+            print('Found %s packages in %s :'  % ( len(packages), self.project)) 
             packages.sort()
             for package in packages:
-                print '\t %s'  % package
+                print('\t %s'  % package)
 
     def get_location(self):
         return '%s/%s/%s' % (self.project, self.package, self.release)
@@ -338,7 +338,7 @@ class Uploader(object):
                                                                      /openalea project
                                                                      /on the gforge server
         """
-        print green('Checking and connecting to the forge. Be patient')
+        print(green('Checking and connecting to the forge. Be patient'))
         self.check_project()
         self.check_packages()
         self.check_releases()
@@ -346,16 +346,16 @@ class Uploader(object):
 
         files = glob.glob(self.glob)
         if len(files)==0:
-            print 'No file with glob %s found. Nothing to upload' % (self.glob)
+            print('No file with glob %s found. Nothing to upload' % (self.glob))
             sys.exit(0)
 
-        print purple('You are about to upload the following files on the gforge (in %s): ' % self.get_location())
+        print(purple('You are about to upload the following files on the gforge (in %s): ' % self.get_location()))
         for f in files:	
-            print '\t%s' %f
+            print('\t%s' %f)
 
         for file in files:
             if os.path.basename(file) in self.server_files:
-                print purple('%s already present on the gforge (in %s). It will therefore be replaced' %(os.path.basename(file), self.get_location()))
+                print(purple('%s already present on the gforge (in %s). It will therefore be replaced' %(os.path.basename(file), self.get_location())))
                 if self.remove_file(file):
                     self.add_file(file)
             else:
@@ -375,7 +375,7 @@ class Uploader(object):
                                            /on the gforge server
 
         """
-        print 'Checking and connecting to the forge. Be patient'
+        print('Checking and connecting to the forge. Be patient')
         self.check_project()
         self.check_packages()
         # if only --package is provided, we assume that the whole package must be deleted included all the files
@@ -385,29 +385,29 @@ class Uploader(object):
             self.check_releases()
             files = server.get_files(self.project, self.package, self.release)
             if len(files)==0:
-                print 'No file with glob % found. Nothing to upload' % (self.glob)
+                print('No file with glob % found. Nothing to upload' % (self.glob))
                 sys.exit(0)
             for file in files:
                 if fnmatch(file, self.glob):
                     self.remove_file(file)
                 else:
-                    print '%s does not match the glob option %s. Skipped' % (file, self.glob)
+                    print('%s does not match the glob option %s. Skipped' % (file, self.glob))
 
 
         elif self.package and self.release and not self.glob:
             self.check_releases()
             files = server.get_files(self.project, self.package, self.release)
-            print purple('You are about to delete the release %s that contains the following files: ' % self.get_location())
+            print(purple('You are about to delete the release %s that contains the following files: ' % self.get_location()))
             for f in files:	
-                print '\t%s' %f
+                print('\t%s' %f)
             if self.ask(purple('Shall we proceed ?')):
                 if self.dry_run:
                     pass
                 else:
                     self.server.remove_release(self.project, self.package, self.release)
-                print 'Release %s deleted' % self.release
+                print('Release %s deleted' % self.release)
             else:
-                print 'skipped'
+                print('skipped')
 
         elif self.package and not self.release and not self.glob:
             releases = server.get_releases(self.project, self.package)
@@ -418,22 +418,22 @@ class Uploader(object):
                     else:
                         self.server.remove_package(self.project, self.package)
                 else:
-                    print 'skipped'
+                    print('skipped')
 
             for release in releases:
                 files = server.get_files(self.project, self.package, release)
-                print purple('You are about to delete the release %s that contains the following files: ' % release)
+                print(purple('You are about to delete the release %s that contains the following files: ' % release))
                 for f in files:	
-                    print '\t%s' %f
+                    print('\t%s' %f)
 
             if self.ask(purple('Shall we proceed ?')):
                 if self.dry_run:
                     pass
                 else:
                     self.server.remove_package(self.project, self.package)
-                    print green('done')
+                    print(green('done'))
             else:
-                print 'skipped'
+                print('skipped')
 
     def run(self):
         # Query the project/package/release
@@ -446,7 +446,7 @@ class Uploader(object):
         elif self.mode == 'remove' or self.mode == 'delete':
             self.remove()
         else:
-            print 'Use --mode to provide a mode in %s. Type --help for more options ' % self.available_mode
+            print('Use --mode to provide a mode in %s. Type --help for more options ' % self.available_mode)
             sys.exit(0)
 
 
@@ -505,15 +505,15 @@ def main():
 
     try:
         (opts, args)= parser.parse_args()
-    except Exception,e:
+    except Exception as e:
         parser.print_usage()
-        print "Error while parsing args:", e
+        print("Error while parsing args:", e)
         raise e
 
-    print bold("Running gforge_upload version %s" % __revision__.split()[2])
+    print(bold("Running gforge_upload version %s" % __revision__.split()[2]))
     if opts.non_interactive is True:
-        print bold(red("You are running gforge_upload without interaction (-Y option)"))
-        ok = raw_input(bold(red("We assume that you want to reply yes to all questions including file removal. Shall we continue ?")))
+        print(bold(red("You are running gforge_upload without interaction (-Y option)")))
+        ok = input(bold(red("We assume that you want to reply yes to all questions including file removal. Shall we continue ?")))
         if not ok:
             sys.exit(0)
  

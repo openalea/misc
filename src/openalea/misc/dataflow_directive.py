@@ -25,7 +25,7 @@ from openalea.core.alea import *
 
 import matplotlib.cbook as cbook
 
-import sys, os, shutil, imp, warnings, cStringIO, re
+import sys, os, shutil, imp, warnings, io, re
 try:
     from hashlib import md5
 except ImportError:
@@ -270,7 +270,7 @@ def _plot_directive(plot_path, basedir, package_name, node_name, caption,
 
     if num_figs > 0:
         options = ['%s:%s: %s' % (template_content_indent, key, val)
-                   for key, val in options.items()]
+                   for key, val in list(options.items())]
         options = "\n".join(options)
 
         outname = basename
@@ -317,13 +317,13 @@ def plot_directive(name, arguments, options, content, lineno,
             node_name = arguments[1]
         else:
             raise ValueError("expect 2 arguments")
-        print 'Dataflow extension: processing %s.%s ' % (package_name, node_name)
+        print('Dataflow extension: processing %s.%s ' % (package_name, node_name))
         try:
 
             return _plot_directive(plot_path, basedir, package_name, node_name, caption,
                                options, state_machine)
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             DataflowWarning("dataflow sphinx extension failed while processing %s %s" % (package_name, node_name))
     return list()
 
@@ -333,7 +333,7 @@ def mark_plot_labels(app, document):
     the "htmlonly" (or "latexonly") node to the actual figure node
     itself.
     """
-    for name, explicit in document.nametypes.iteritems():
+    for name, explicit in document.nametypes.items():
         if not explicit:
             continue
         labelid = document.nameids[name]

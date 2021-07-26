@@ -31,7 +31,7 @@ import openalea.misc as misc
 #develop mode
 openalea = misc.__path__[0] + os.sep +'..' + os.sep + '..' + os.sep + '..' + os.sep +'share' + os.sep
 if os.path.isdir(os.path.join(openalea, 'sphinxext')):
-    print 'develop mode'
+    print('develop mode')
     sys.path.append(os.path.join(openalea,'sphinxext'))
 else:
     #install mode
@@ -91,7 +91,7 @@ source_suffix = '.rst'
 master_doc = 'contents'
 
 # General information about the project.
-project = u'to be filled in a metainfo.ini at the same level as the setup.py'
+project = 'to be filled in a metainfo.ini at the same level as the setup.py'
 copyright = None # to be dedined by the user
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -246,8 +246,8 @@ latex_font_size = '10pt'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'main.tex', u'Documentation',
-   u'username from metainfo.ini', 'manual'),
+  ('index', 'main.tex', 'Documentation',
+   'username from metainfo.ini', 'manual'),
 ]
 
 latex_elements = { 'inputenc': '\\usepackage[utf8]{inputenc}' }
@@ -262,10 +262,10 @@ latex_elements = { 'inputenc': '\\usepackage[utf8]{inputenc}' }
 
 # Additional stuff for the LaTeX preamble.
 latex_preamble = """
-   \usepackage{amsmath}
-   \usepackage{amsfonts}
-   \usepackage{amssymb}
-   \usepackage{txfonts}"""
+   \\usepackage{amsmath}
+   \\usepackage{amsfonts}
+   \\usepackage{amssymb}
+   \\usepackage{txfonts}"""
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []

@@ -25,7 +25,7 @@
 """
 
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import posixpath
 from os import path
 
@@ -42,20 +42,20 @@ def fetch_inventory(app, uri, inv):
     localuri = uri.find('://') == -1
     try:
         if inv.find('://') != -1:
-            f = urllib.urlopen(inv)
+            f = urllib.request.urlopen(inv)
         else:
             f = open(path.join(app.srcdir, inv))
-    except Exception, err:
+    except Exception as err:
         app.warn('intersphinx inventory %r not fetchable due to '
                  '%s: %s' % (inv, err.__class__, err))
         return
     try:
-        line = f.next()
+        line = next(f)
         if line.rstrip() != '# Sphinx inventory version 1':
             raise ValueError('unknown or unsupported inventory version')
-        line = f.next()
+        line = next(f)
         projname = line.rstrip()[11:].decode('utf-8')
-        line = f.next()
+        line = next(f)
         version = line.rstrip()[11:]
         for line in f:
             name, type, location = line.rstrip().split(None, 2)
@@ -65,7 +65,7 @@ def fetch_inventory(app, uri, inv):
                 location = posixpath.join(uri, location)
             invdata[name] = (type, projname, version, location)
         f.close()
-    except Exception, err:
+    except Exception as err:
         app.warn('intersphinx inventory %r not readable due to '
                  '%s: %s' % (inv, err.__class__, err))
     else:
@@ -81,7 +81,7 @@ def load_mappings(app):
         env.intersphinx_cache = {}
     cache = env.intersphinx_cache
     update = False
-    for uri, inv in app.config.intersphinx_mapping.iteritems():
+    for uri, inv in app.config.intersphinx_mapping.items():
         # we can safely assume that the uri<->inv mapping is not changed
         # during partial rebuilds since a changed intersphinx_mapping
         # setting will cause a full environment reread
@@ -96,7 +96,7 @@ def load_mappings(app):
             update = True
     if update:
         env.intersphinx_inventory = {}
-        for _, invdata in cache.itervalues():
+        for _, invdata in cache.values():
             if invdata:
                 env.intersphinx_inventory.update(invdata)
 
