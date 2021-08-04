@@ -19,7 +19,7 @@ import os
 import re
 from subprocess import PIPE, Popen
 
-from path import Path
+from openalea.core.path import path
 
 from openalea.deploy.console import (color_terminal, nocolor,
                                      bold, purple, red, green, underline)
@@ -72,7 +72,7 @@ class Multisetup(object):
         >>> Multisetup(["install","--keep-going"], ['deploy', 'visualea'], '.', verbose=True)
         """
         #default
-        self.curdir = Path(curdir).abspath()
+        self.curdir = path(curdir).abspath()
         if isinstance(commands, list):
             self.commands = list(commands)
         elif isinstance(commands, str):
