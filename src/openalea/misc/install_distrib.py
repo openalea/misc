@@ -20,4 +20,4 @@ for egg in l:
     os.system(cmd % egg)
 
 #os.system('PyQGLViewer-0.2.0-2.2.6-3-Py2.5-Qt4.3.2.exe')
-raw_input("finish")
+input("finish")

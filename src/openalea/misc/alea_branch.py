@@ -170,7 +170,7 @@ def svn_path_exists(path, revision="HEAD", peg="HEAD"):
 def svn_remove_path(path):
     sub = dict(svnexec=svn_exec, path=path)
     cmd = "%(svnexec)s remove %(path)s -m \"removing %(path)s branch.\""%sub
-    print cmd
+    print(cmd)
     return dr_call(cmd) == 0
     
 def svn_copy_path(src, tgt, revision="HEAD", peg="HEAD"):
@@ -186,21 +186,21 @@ def svn_copy_path(src, tgt, revision="HEAD", peg="HEAD"):
     
     # let's branch!
     cmd = "%(svnexec)s copy %(src)s %(tgt)s -m \"%(info)s\""%sub
-    print cmd, "\n"
+    print(cmd, "\n")
     return dr_call(cmd)==0
 
 def svn_mkdir(direct):
     sub = dict(svnexec=svn_exec, dir=direct)
     cmd = "%(svnexec)s mkdir --parents %(dir)s -m \"creating %(dir)s directory.\""%sub
-    print cmd
+    print(cmd)
     return dr_call(cmd)==0  
     
 def __svn_del_path_if_exists(path, delete_existing):
     exists = svn_path_exists(path)
     if exists:
-        print "Path %s already exists"%path    
+        print("Path %s already exists"%path)    
         if delete_existing:
-            print "Removing %s"%path
+            print("Removing %s"%path)
             svn_remove_path(path)
         else:
             return None
@@ -224,7 +224,7 @@ def svn_branch_project(project, version, delete_existing,
         
     ret_dict = {}
     for pack, rev in packages:
-        print "Processing", pack, "" if not_dry_run else "for fake"
+        print("Processing", pack, "" if not_dry_run else "for fake")
         if tag:
             src = branch_path( project, version, pack, rev )
         else:
@@ -250,11 +250,11 @@ def svn_update_package(project, version, packages, working_copy, auto_commit=Fal
         
         subd = dict(svnexec=svn_exec,  rev=rev, trunk=trunkpath, branch=working_copy+"/"+pack)
         cmd = cmd%subd
-        print cmd
+        print(cmd)
         pop = dr_popen(cmd, stdout=subprocess.PIPE)
         txt, err = pop.communicate()        
         ret = pop.returncode
-        print txt
+        print(txt)
         if ret != 0:
             return False
         if auto_commit:
@@ -263,7 +263,7 @@ def svn_update_package(project, version, packages, working_copy, auto_commit=Fal
             fname = pj(working_copy, "merge_log_%s.txt"%pack)
             with open( fname, "w" ) as f:
                 f.write(txt)
-                print "Possible commit log written to:", fname
+                print("Possible commit log written to:", fname)
         if ret:
             return False
     return True
@@ -281,13 +281,13 @@ def svn_export_project(project, version, working_copy):
     cmd = "%(svnexec)s export %(wc)s %(proj)s"%subd
     if dr_call(cmd) == 0:
         tarf = project_ver+".tar.gz"
-        print "create tarfile", tarf
+        print("create tarfile", tarf)
         if not_dry_run:
             try:
                 with tarfile.open(tarf, "w:gz") as tar:
                     tar.add( pj(working_copy, project_exp), arcname=project )
-            except Exception, e:
-                print e
+            except Exception as e:
+                print(e)
                 return -1
             else:
                 return 0
@@ -308,16 +308,16 @@ dr_popen = subprocess.Popen
 
 # -- No op functions used when not_dry_run is False --
 def dry_call(*args, **kwargs):
-    print "dry_call", args, kwargs
+    print("dry_call", args, kwargs)
     return 0
     
 class dry_popen(object):
     def __init__(self, *args, **kwargs):
-        print "dry_popen", args, kwargs
+        print("dry_popen", args, kwargs)
         self.returncode = 0
     
     def communicate(self, *args, **kwargs):
-        print "dry_popen.communicate", args, kwargs
+        print("dry_popen.communicate", args, kwargs)
         return "", None
         
 class NullOutput(object):
@@ -392,17 +392,17 @@ def main():
                 args.passwd = getpass.getpass("GForge password please: ")
 
     if not args.not_dry_run:
-        print "Doing a dry run. Check that the command lines are correct then rerun with the --not-dry-run flag\n"
+        print("Doing a dry run. Check that the command lines are correct then rerun with the --not-dry-run flag\n")
         not_dry_run = False
         dr_call  = dry_call
         dr_popen = dry_popen
     
         
     if not has_svn([args.svndir]):
-        print "svn command in not available"
+        print("svn command in not available")
 
     if not args.working_copy and (args.update or args.export_srcs):
-        print "Cannot merge export, no working copy given"
+        print("Cannot merge export, no working copy given")
         sys.exit(-1)
         
     if args.silent:
@@ -412,9 +412,9 @@ def main():
         sys.exit( 0 if svn_export_project(args.project, args.version, args.working_copy) else -1)        
         
     if args.update:
-        if "ALL" in zip(*args.update)[0]:
+        if "ALL" in list(zip(*args.update))[0]:
             args.update = package_lists.get(args.project)
-        elif "ROOT" in zip(*args.update)[0]:
+        elif "ROOT" in list(zip(*args.update))[0]:
             args.update = [("","")]
         sys.exit( 0 if svn_update_package(args.project, args.version, args.update, args.working_copy, args.auto_commit) else -1)
         
@@ -423,13 +423,13 @@ def main():
                                   packages=args.packages,
                                   branch_can_exist=args.ignore_rbase,
                                   no_multisetup=args.no_multisetup, tag=True):
-            print "svn tag operation failed"
+            print("svn tag operation failed")
     else:
         if not svn_branch_project(args.project, args.version, args.delete_existing, 
                                   packages=args.packages,
                                   branch_can_exist=args.ignore_rbase,
                                   no_multisetup=args.no_multisetup):
-            print "svn branch operation failed"
+            print("svn branch operation failed")
         
 if __name__ == "__main__":
     main()

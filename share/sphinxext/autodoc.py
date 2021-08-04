@@ -55,7 +55,7 @@ class DefDict(dict):
             return dict.__getitem__(self, key)
         except KeyError:
             return self.default
-    def __nonzero__(self):
+    def __bool__(self):
         # docutils check "if option_spec"
         return True
 
@@ -213,7 +213,7 @@ class Documenter(object):
     #: generated directive name
     objtype = 'object'
     #: indentation by which to indent the directive content
-    content_indent = u'   '
+    content_indent = '   '
     #: priority if multiple documenters return True from can_document_member
     priority = 0
     #: order if autodoc_member_order is set to 'groupwise'
@@ -224,7 +224,7 @@ class Documenter(object):
     @staticmethod
     def get_attr(obj, name, *defargs):
         """getattr() override for types such as Zope interfaces."""
-        for typ, func in AutoDirective._special_attrgetters.iteritems():
+        for typ, func in AutoDirective._special_attrgetters.items():
             if isinstance(obj, typ):
                 return func(obj, name, *defargs)
         return safe_getattr(obj, name, *defargs)
@@ -234,7 +234,7 @@ class Documenter(object):
         """Called to see if a member can be documented by this documenter."""
         raise NotImplementedError('must be implemented in subclasses')
 
-    def __init__(self, directive, name, indent=u''):
+    def __init__(self, directive, name, indent=''):
         self.directive = directive
         self.env = directive.env
         self.options = directive.genopt
@@ -322,7 +322,7 @@ class Documenter(object):
                 obj = self.get_attr(obj, part)
             self.object = obj
             return True
-        except (SyntaxError, ImportError, AttributeError), err:
+        except (SyntaxError, ImportError, AttributeError) as err:
             self.directive.warn(
                 'autodoc can\'t import/find %s %r, it reported error: '
                 '"%s", please check your spelling and sys.path' %
@@ -385,14 +385,14 @@ class Documenter(object):
         # the name to put into the generated directive -- doesn't contain
         # the module (except for module directive of course)
         name_in_directive = '.'.join(self.objpath) or self.modname
-        self.add_line(u'.. %s:: %s%s' % (directive, name_in_directive, sig),
+        self.add_line('.. %s:: %s%s' % (directive, name_in_directive, sig),
                       '<autodoc>')
         if self.options.noindex:
-            self.add_line(u'   :noindex:', '<autodoc>')
+            self.add_line('   :noindex:', '<autodoc>')
         if self.objpath:
             # Be explicit about the module, this is necessary since .. class::
             # etc. don't support a prepended module name
-            self.add_line(u'   :module: %s' % self.modname, '<autodoc>')
+            self.add_line('   :module: %s' % self.modname, '<autodoc>')
 
     def get_doc(self, encoding=None):
         """Decode and return lines of the docstring(s) for the object."""
@@ -419,9 +419,9 @@ class Documenter(object):
         # set sourcename and add content from attribute documentation
         if self.analyzer:
             # prevent encoding errors when the file name is non-ASCII
-            filename = unicode(self.analyzer.srcname,
+            filename = str(self.analyzer.srcname,
                                sys.getfilesystemencoding(), 'replace')
-            sourcename = u'%s:docstring of %s' % (filename, self.fullname)
+            sourcename = '%s:docstring of %s' % (filename, self.fullname)
 
             attr_docs = self.analyzer.find_attr_docs()
             if self.objpath:
@@ -432,7 +432,7 @@ class Documenter(object):
                     for i, line in enumerate(self.process_doc(docstrings)):
                         self.add_line(line, sourcename, i)
         else:
-            sourcename = u'docstring of %s' % self.fullname
+            sourcename = 'docstring of %s' % self.fullname
 
         # add content from docstrings
         if not no_docstring:
@@ -478,7 +478,7 @@ class Documenter(object):
             # __dict__ changes while getting attributes
             return False, sorted([
                 (mname, self.get_attr(self.object, mname, None))
-                for mname in self.get_attr(self.object, '__dict__').keys()])
+                for mname in list(self.get_attr(self.object, '__dict__').keys())])
 
     def filter_members(self, members, want_all):
         """
@@ -557,7 +557,7 @@ class Documenter(object):
         # document non-skipped members
         memberdocumenters = []
         for (mname, member, isattr) in self.filter_members(members, want_all):
-            classes = [cls for cls in AutoDirective._registry.itervalues()
+            classes = [cls for cls in AutoDirective._registry.values()
                        if cls.can_document_member(member, mname, isattr, self)]
             if not classes:
                 # don't know how to document this member
@@ -622,7 +622,7 @@ class Documenter(object):
             # parse right now, to get PycodeErrors on parsing (results will
             # be cached anyway)
             self.analyzer.find_attr_docs()
-        except PycodeError, err:
+        except PycodeError as err:
             # no source file -- e.g. for builtin and C modules
             self.analyzer = None
             # at least add the module.__file__ as a dependency
@@ -639,19 +639,19 @@ class Documenter(object):
         # make sure that the result starts with an empty line.  This is
         # necessary for some situations where another directive preprocesses
         # reST and no starting newline is present
-        self.add_line(u'', '')
+        self.add_line('', '')
 
         # format the object's signature, if any
         try:
             sig = self.format_signature()
-        except Exception, err:
+        except Exception as err:
             self.directive.warn('error while formatting signature for '
                                 '%s: %s' % (self.fullname, err))
             sig = ''
 
         # generate the directive header and options, if applicable
         self.add_directive_header(sig)
-        self.add_line(u'', '<autodoc>')
+        self.add_line('', '<autodoc>')
 
         # e.g. the module directive doesn't have content
         self.indent += self.content_indent
@@ -668,7 +668,7 @@ class ModuleDocumenter(Documenter):
     Specialized Documenter subclass for modules.
     """
     objtype = 'module'
-    content_indent = u''
+    content_indent = ''
 
     option_spec = {
         'members': members_option, 'undoc-members': bool_option,
@@ -701,12 +701,12 @@ class ModuleDocumenter(Documenter):
         # add some module-specific options
         if self.options.synopsis:
             self.add_line(
-                u'   :synopsis: ' + self.options.synopsis, '<autodoc>')
+                '   :synopsis: ' + self.options.synopsis, '<autodoc>')
         if self.options.platform:
             self.add_line(
-                u'   :platform: ' + self.options.platform, '<autodoc>')
+                '   :platform: ' + self.options.platform, '<autodoc>')
         if self.options.deprecated:
-            self.add_line(u'   :deprecated:', '<autodoc>')
+            self.add_line('   :deprecated:', '<autodoc>')
 
     def get_object_members(self, want_all):
         if want_all:
@@ -877,13 +877,13 @@ class ClassDocumenter(ModuleLevelDocumenter):
 
         # add inheritance info, if wanted
         if not self.doc_as_attr and self.options.show_inheritance:
-            self.add_line(u'', '<autodoc>')
+            self.add_line('', '<autodoc>')
             if len(self.object.__bases__):
                 bases = [b.__module__ == '__builtin__' and
-                         u':class:`%s`' % b.__name__ or
-                         u':class:`%s.%s`' % (b.__module__, b.__name__)
+                         ':class:`%s`' % b.__name__ or
+                         ':class:`%s.%s`' % (b.__module__, b.__name__)
                          for b in self.object.__bases__]
-                self.add_line(_(u'   Bases: %s') % ', '.join(bases),
+                self.add_line(_('   Bases: %s') % ', '.join(bases),
                               '<autodoc>')
 
     def get_doc(self, encoding=None):
@@ -976,7 +976,7 @@ class MethodDocumenter(ClassLevelDocumenter):
         ret = ClassLevelDocumenter.import_object(self)
         if isinstance(self.object, classmethod) or \
                (isinstance(self.object, MethodType) and
-                self.object.im_self is not None):
+                self.object.__self__ is not None):
             self.directivetype = 'classmethod'
             # document class and static members before ordinary ones
             self.member_order = self.member_order - 1
@@ -1066,7 +1066,7 @@ class AutoDirective(Directive):
         doc_class = self._registry[objtype]
         # process the options with the selected documenter's option_spec
         self.genopt = Options(assemble_option_dict(
-            self.options.items(), doc_class.option_spec))
+            list(self.options.items()), doc_class.option_spec))
         # generate the output
         documenter = doc_class(self, self.arguments[0])
         documenter.generate(more_content=self.content)

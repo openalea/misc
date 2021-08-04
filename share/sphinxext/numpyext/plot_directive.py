@@ -16,7 +16,7 @@ The set of file formats to generate can be specified with the
 plot_formats configuration variable.
 """
 
-import sys, os, glob, shutil, hashlib, imp, warnings, cStringIO
+import sys, os, glob, shutil, hashlib, imp, warnings, io
 import re
 try:
     from hashlib import md5
@@ -46,7 +46,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as image
 from matplotlib import _pylab_helpers
 
-import only_directives
+from . import only_directives
 
 if hasattr(os.path, 'relpath'):
     relpath = os.path.relpath
@@ -58,22 +58,22 @@ else:
         """
 
         if not os.path.exists(target):
-            raise OSError, 'Target does not exist: '+target
+            raise OSError('Target does not exist: '+target)
 
         if not os.path.isdir(base):
-            raise OSError, 'Base is not a directory or does not exist: '+base
+            raise OSError('Base is not a directory or does not exist: '+base)
 
         base_list = (os.path.abspath(base)).split(os.sep)
         target_list = (os.path.abspath(target)).split(os.sep)
 
         # On the windows platform the target may be on a completely different drive from the base.
-        if os.name in ['nt','dos','os2'] and base_list[0] <> target_list[0]:
-            raise OSError, 'Target is on a different drive to base. Target: '+target_list[0].upper()+', base: '+base_list[0].upper()
+        if os.name in ['nt','dos','os2'] and base_list[0] != target_list[0]:
+            raise OSError('Target is on a different drive to base. Target: '+target_list[0].upper()+', base: '+base_list[0].upper())
 
         # Starting from the filepath root, work out how much of the filepath is
         # shared by base and target.
         for i in range(min(len(base_list), len(target_list))):
-            if base_list[i] <> target_list[i]: break
+            if base_list[i] != target_list[i]: break
         else:
             # If we broke out of the loop, i is pointing to the first differing path elements.
             # If we didn't break out of the loop, i is pointing to identical path elements.
@@ -135,7 +135,7 @@ def runfile(fullpath):
     path, fname = os.path.split(fullpath)
     sys.path.insert(0, os.path.abspath(path))
     stdout = sys.stdout
-    sys.stdout = cStringIO.StringIO()
+    sys.stdout = io.StringIO()
     os.chdir(path)
     try:
         fd = open(fname)
@@ -291,7 +291,7 @@ def plot_directive(name, arguments, options, content, lineno,
     # Generate the figures, and return the number of them
     num_figs = makefig(reference, content, tmpdir)
 
-    if options.has_key('include-source'):
+    if 'include-source' in options:
         if content is None:
             content = open(reference, 'r').read()
         lines = ['::', ''] + ['    %s'%row.rstrip() for row in content.split('\n')]
@@ -301,7 +301,7 @@ def plot_directive(name, arguments, options, content, lineno,
 
     if num_figs > 0:
         options = ['      :%s: %s' % (key, val) for key, val in
-                   options.items()]
+                   list(options.items())]
         options = "\n".join(options)
         if fname is not None:
             shutil.copyfile(reference, os.path.join(destdir, fname))

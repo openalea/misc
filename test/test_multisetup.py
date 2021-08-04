@@ -45,13 +45,13 @@ def test_parse_no_packages():
                          commands='commands --exclude-packages core', 
                          packages=['stdlib','core','deploy'])
 
-    print mysetup.packages
+    print(mysetup.packages)
     assert mysetup.packages == ['stdlib','deploy']
     mysetup = Multisetup(curdir=curdir, 
                          commands='commands --exclude-packages stdlib core', 
                          packages=['stdlib','core','deploy'])
     # sets are unordered, so we use union instead of pure ==
-    print 'oooooo', mysetup.packages
+    print('oooooo', mysetup.packages)
     assert mysetup.packages == ['deploy']
 
 

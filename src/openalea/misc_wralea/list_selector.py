@@ -11,8 +11,8 @@ class Select(Node):
         in_list = inputs[0]
 
         if len(in_list) != len(self.out_indices):
-            print 'ERROR: out', self.out_indices
-            print 'in ', in_list
+            print('ERROR: out', self.out_indices)
+            print('in ', in_list)
             return in_list
         return [in_list[i] for i, select in enumerate(self.out_indices) if select],
 

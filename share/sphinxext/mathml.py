@@ -12,7 +12,7 @@ def math_role(role, rawtext, text, lineno, inliner,
     latex = rawtext[i+1:-1]
     try:
         mathml_tree = parse_latex_math(latex, inline=True)
-    except SyntaxError, msg:
+    except SyntaxError as msg:
         msg = inliner.reporter.error(msg, line=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
@@ -32,7 +32,7 @@ except ImportError:
         latex = ''.join(content)
         try:
             mathml_tree = parse_latex_math(latex, inline=False)
-        except SyntaxError, msg:
+        except SyntaxError as msg:
             error = state_machine.reporter.error(
                 msg, nodes.literal_block(block_text, block_text), line=lineno)
             return [error]
@@ -51,7 +51,7 @@ else:
             latex = ' '.join(self.content)
             try:
                 mathml_tree = parse_latex_math(latex, inline=False)
-            except SyntaxError, msg:
+            except SyntaxError as msg:
                 error = self.state_machine.reporter.error(
                     msg, nodes.literal_block(self.block_text, self.block_text),
                     line=self.lineno)
@@ -235,8 +235,8 @@ class msubsup(math):
         return math.xml(self)
 
 class mfenced(math):
-    translation = {'\\{': '{', '\\langle': u'\u2329',
-                   '\\}': '}', '\\rangle': u'\u232A',
+    translation = {'\\{': '{', '\\langle': '\u2329',
+                   '\\}': '}', '\\rangle': '\u232A',
                    '.': ''}
     def __init__(self, par):
         self.openpar = par
@@ -259,7 +259,7 @@ class mstyle(math):
 
     def xml_start(self):
         return ['<mstyle '] + ['%s="%s"' % item
-                               for item in self.attrs.items()] + ['>']
+                               for item in list(self.attrs.items())] + ['>']
 
 class mover(math):
     nchildren = 2
@@ -293,28 +293,28 @@ class mtext(math):
 over = {'tilde': '~',
         'hat': '^',
         'bar': '_',
-        'vec': u'\u2192'}
+        'vec': '\u2192'}
 
 Greek = {
     # Upper case greek letters:
-    'Phi': u'\u03a6', 'Xi': u'\u039e', 'Sigma': u'\u03a3', 'Psi': u'\u03a8', 'Delta': u'\u0394', 'Theta': u'\u0398', 'Upsilon': u'\u03d2', 'Pi': u'\u03a0', 'Omega': u'\u03a9', 'Gamma': u'\u0393', 'Lambda': u'\u039b'}
+    'Phi': '\u03a6', 'Xi': '\u039e', 'Sigma': '\u03a3', 'Psi': '\u03a8', 'Delta': '\u0394', 'Theta': '\u0398', 'Upsilon': '\u03d2', 'Pi': '\u03a0', 'Omega': '\u03a9', 'Gamma': '\u0393', 'Lambda': '\u039b'}
 greek = {
     # Lower case greek letters:
-    'tau': u'\u03c4', 'phi': u'\u03d5', 'xi': u'\u03be', 'iota': u'\u03b9', 'epsilon': u'\u03f5', 'varrho': u'\u03f1', 'varsigma': u'\u03c2', 'beta': u'\u03b2', 'psi': u'\u03c8', 'rho': u'\u03c1', 'delta': u'\u03b4', 'alpha': u'\u03b1', 'zeta': u'\u03b6', 'omega': u'\u03c9', 'varepsilon': u'\u03b5', 'kappa': u'\u03ba', 'vartheta': u'\u03d1', 'chi': u'\u03c7', 'upsilon': u'\u03c5', 'sigma': u'\u03c3', 'varphi': u'\u03c6', 'varpi': u'\u03d6', 'mu': u'\u03bc', 'eta': u'\u03b7', 'theta': u'\u03b8', 'pi': u'\u03c0', 'varkappa': u'\u03f0', 'nu': u'\u03bd', 'gamma': u'\u03b3', 'lambda': u'\u03bb'}
+    'tau': '\u03c4', 'phi': '\u03d5', 'xi': '\u03be', 'iota': '\u03b9', 'epsilon': '\u03f5', 'varrho': '\u03f1', 'varsigma': '\u03c2', 'beta': '\u03b2', 'psi': '\u03c8', 'rho': '\u03c1', 'delta': '\u03b4', 'alpha': '\u03b1', 'zeta': '\u03b6', 'omega': '\u03c9', 'varepsilon': '\u03b5', 'kappa': '\u03ba', 'vartheta': '\u03d1', 'chi': '\u03c7', 'upsilon': '\u03c5', 'sigma': '\u03c3', 'varphi': '\u03c6', 'varpi': '\u03d6', 'mu': '\u03bc', 'eta': '\u03b7', 'theta': '\u03b8', 'pi': '\u03c0', 'varkappa': '\u03f0', 'nu': '\u03bd', 'gamma': '\u03b3', 'lambda': '\u03bb'}
 
 special = {
     # Binary operation symbols:
-    'wedge': u'\u2227', 'diamond': u'\u22c4', 'star': u'\u22c6', 'amalg': u'\u2a3f', 'ast': u'\u2217', 'odot': u'\u2299', 'triangleleft': u'\u25c1', 'bigtriangleup': u'\u25b3', 'ominus': u'\u2296', 'ddagger': u'\u2021', 'wr': u'\u2240', 'otimes': u'\u2297', 'sqcup': u'\u2294', 'oplus': u'\u2295', 'bigcirc': u'\u25cb', 'oslash': u'\u2298', 'sqcap': u'\u2293', 'bullet': u'\u2219', 'cup': u'\u222a', 'cdot': u'\u22c5', 'cap': u'\u2229', 'bigtriangledown': u'\u25bd', 'times': u'\xd7', 'setminus': u'\u2216', 'circ': u'\u2218', 'vee': u'\u2228', 'uplus': u'\u228e', 'mp': u'\u2213', 'dagger': u'\u2020', 'triangleright': u'\u25b7', 'div': u'\xf7', 'pm': u'\xb1',
+    'wedge': '\u2227', 'diamond': '\u22c4', 'star': '\u22c6', 'amalg': '\u2a3f', 'ast': '\u2217', 'odot': '\u2299', 'triangleleft': '\u25c1', 'bigtriangleup': '\u25b3', 'ominus': '\u2296', 'ddagger': '\u2021', 'wr': '\u2240', 'otimes': '\u2297', 'sqcup': '\u2294', 'oplus': '\u2295', 'bigcirc': '\u25cb', 'oslash': '\u2298', 'sqcap': '\u2293', 'bullet': '\u2219', 'cup': '\u222a', 'cdot': '\u22c5', 'cap': '\u2229', 'bigtriangledown': '\u25bd', 'times': '\xd7', 'setminus': '\u2216', 'circ': '\u2218', 'vee': '\u2228', 'uplus': '\u228e', 'mp': '\u2213', 'dagger': '\u2020', 'triangleright': '\u25b7', 'div': '\xf7', 'pm': '\xb1',
     # Relation symbols:
-    'subset': u'\u2282', 'propto': u'\u221d', 'geq': u'\u2265', 'ge': u'\u2265', 'sqsubset': u'\u228f', 'Join': u'\u2a1d', 'frown': u'\u2322', 'models': u'\u22a7', 'supset': u'\u2283', 'in': u'\u2208', 'doteq': u'\u2250', 'dashv': u'\u22a3', 'gg': u'\u226b', 'leq': u'\u2264', 'succ': u'\u227b', 'vdash': u'\u22a2', 'cong': u'\u2245', 'simeq': u'\u2243', 'subseteq': u'\u2286', 'parallel': u'\u2225', 'equiv': u'\u2261', 'ni': u'\u220b', 'le': u'\u2264', 'approx': u'\u2248', 'precsim': u'\u227e', 'sqsupset': u'\u2290', 'll': u'\u226a', 'sqsupseteq': u'\u2292', 'mid': u'\u2223', 'prec': u'\u227a', 'succsim': u'\u227f', 'bowtie': u'\u22c8', 'perp': u'\u27c2', 'sqsubseteq': u'\u2291', 'asymp': u'\u224d', 'smile': u'\u2323', 'supseteq': u'\u2287', 'sim': u'\u223c', 'neq': u'\u2260',
+    'subset': '\u2282', 'propto': '\u221d', 'geq': '\u2265', 'ge': '\u2265', 'sqsubset': '\u228f', 'Join': '\u2a1d', 'frown': '\u2322', 'models': '\u22a7', 'supset': '\u2283', 'in': '\u2208', 'doteq': '\u2250', 'dashv': '\u22a3', 'gg': '\u226b', 'leq': '\u2264', 'succ': '\u227b', 'vdash': '\u22a2', 'cong': '\u2245', 'simeq': '\u2243', 'subseteq': '\u2286', 'parallel': '\u2225', 'equiv': '\u2261', 'ni': '\u220b', 'le': '\u2264', 'approx': '\u2248', 'precsim': '\u227e', 'sqsupset': '\u2290', 'll': '\u226a', 'sqsupseteq': '\u2292', 'mid': '\u2223', 'prec': '\u227a', 'succsim': '\u227f', 'bowtie': '\u22c8', 'perp': '\u27c2', 'sqsubseteq': '\u2291', 'asymp': '\u224d', 'smile': '\u2323', 'supseteq': '\u2287', 'sim': '\u223c', 'neq': '\u2260',
     # Arrow symbols:
-    'searrow': u'\u2198', 'updownarrow': u'\u2195', 'Uparrow': u'\u21d1', 'longleftrightarrow': u'\u27f7', 'Leftarrow': u'\u21d0', 'longmapsto': u'\u27fc', 'Longleftarrow': u'\u27f8', 'nearrow': u'\u2197', 'hookleftarrow': u'\u21a9', 'downarrow': u'\u2193', 'Leftrightarrow': u'\u21d4', 'longrightarrow': u'\u27f6', 'rightharpoondown': u'\u21c1', 'longleftarrow': u'\u27f5', 'rightarrow': u'\u2192', 'Updownarrow': u'\u21d5', 'rightharpoonup': u'\u21c0', 'Longleftrightarrow': u'\u27fa', 'leftarrow': u'\u2190', 'mapsto': u'\u21a6', 'nwarrow': u'\u2196', 'uparrow': u'\u2191', 'leftharpoonup': u'\u21bc', 'leftharpoondown': u'\u21bd', 'Downarrow': u'\u21d3', 'leftrightarrow': u'\u2194', 'Longrightarrow': u'\u27f9', 'swarrow': u'\u2199', 'hookrightarrow': u'\u21aa', 'Rightarrow': u'\u21d2',
+    'searrow': '\u2198', 'updownarrow': '\u2195', 'Uparrow': '\u21d1', 'longleftrightarrow': '\u27f7', 'Leftarrow': '\u21d0', 'longmapsto': '\u27fc', 'Longleftarrow': '\u27f8', 'nearrow': '\u2197', 'hookleftarrow': '\u21a9', 'downarrow': '\u2193', 'Leftrightarrow': '\u21d4', 'longrightarrow': '\u27f6', 'rightharpoondown': '\u21c1', 'longleftarrow': '\u27f5', 'rightarrow': '\u2192', 'Updownarrow': '\u21d5', 'rightharpoonup': '\u21c0', 'Longleftrightarrow': '\u27fa', 'leftarrow': '\u2190', 'mapsto': '\u21a6', 'nwarrow': '\u2196', 'uparrow': '\u2191', 'leftharpoonup': '\u21bc', 'leftharpoondown': '\u21bd', 'Downarrow': '\u21d3', 'leftrightarrow': '\u2194', 'Longrightarrow': '\u27f9', 'swarrow': '\u2199', 'hookrightarrow': '\u21aa', 'Rightarrow': '\u21d2',
     # Miscellaneous symbols:
-    'infty': u'\u221e', 'surd': u'\u221a', 'partial': u'\u2202', 'ddots': u'\u22f1', 'exists': u'\u2203', 'flat': u'\u266d', 'diamondsuit': u'\u2662', 'wp': u'\u2118', 'spadesuit': u'\u2660', 'Re': u'\u211c', 'vdots': u'\u22ee', 'aleph': u'\u2135', 'clubsuit': u'\u2663', 'sharp': u'\u266f', 'angle': u'\u2220', 'prime': u'\u2032', 'natural': u'\u266e', 'ell': u'\u2113', 'neg': u'\xac', 'top': u'\u22a4', 'nabla': u'\u2207', 'bot': u'\u22a5', 'heartsuit': u'\u2661', 'cdots': u'\u22ef', 'Im': u'\u2111', 'forall': u'\u2200', 'imath': u'\u0131', 'hbar': u'\u210f', 'emptyset': u'\u2205',
+    'infty': '\u221e', 'surd': '\u221a', 'partial': '\u2202', 'ddots': '\u22f1', 'exists': '\u2203', 'flat': '\u266d', 'diamondsuit': '\u2662', 'wp': '\u2118', 'spadesuit': '\u2660', 'Re': '\u211c', 'vdots': '\u22ee', 'aleph': '\u2135', 'clubsuit': '\u2663', 'sharp': '\u266f', 'angle': '\u2220', 'prime': '\u2032', 'natural': '\u266e', 'ell': '\u2113', 'neg': '\xac', 'top': '\u22a4', 'nabla': '\u2207', 'bot': '\u22a5', 'heartsuit': '\u2661', 'cdots': '\u22ef', 'Im': '\u2111', 'forall': '\u2200', 'imath': '\u0131', 'hbar': '\u210f', 'emptyset': '\u2205',
     # Variable-sized symbols:
-    'bigotimes': u'\u2a02', 'coprod': u'\u2210', 'int': u'\u222b', 'sum': u'\u2211', 'bigodot': u'\u2a00', 'bigcup': u'\u22c3', 'biguplus': u'\u2a04', 'bigcap': u'\u22c2', 'bigoplus': u'\u2a01', 'oint': u'\u222e', 'bigvee': u'\u22c1', 'bigwedge': u'\u22c0', 'prod': u'\u220f',
+    'bigotimes': '\u2a02', 'coprod': '\u2210', 'int': '\u222b', 'sum': '\u2211', 'bigodot': '\u2a00', 'bigcup': '\u22c3', 'biguplus': '\u2a04', 'bigcap': '\u22c2', 'bigoplus': '\u2a01', 'oint': '\u222e', 'bigvee': '\u22c1', 'bigwedge': '\u22c0', 'prod': '\u220f',
     # Braces:
-    'langle': u'\u2329', 'rangle': u'\u232A'}
+    'langle': '\u2329', 'rangle': '\u232A'}
 
 sumintprod = ''.join([special[symbol] for symbol in
                       ['sum', 'int', 'oint', 'prod']])
@@ -427,36 +427,36 @@ def parse_latex_math(string, inline=True):
     return tree
 
 
-mathbb = {'A': u'\U0001D538',
-          'B': u'\U0001D539',
-          'C': u'\u2102',
-          'D': u'\U0001D53B',
-          'E': u'\U0001D53C',
-          'F': u'\U0001D53D',
-          'G': u'\U0001D53E',
-          'H': u'\u210D',
-          'I': u'\U0001D540',
-          'J': u'\U0001D541',
-          'K': u'\U0001D542',
-          'L': u'\U0001D543',
-          'M': u'\U0001D544',
-          'N': u'\u2115',
-          'O': u'\U0001D546',
-          'P': u'\u2119',
-          'Q': u'\u211A',
-          'R': u'\u211D',
-          'S': u'\U0001D54A',
-          'T': u'\U0001D54B',
-          'U': u'\U0001D54C',
-          'V': u'\U0001D54D',
-          'W': u'\U0001D54E',
-          'X': u'\U0001D54F',
-          'Y': u'\U0001D550',
-          'Z': u'\u2124'}
+mathbb = {'A': '\U0001D538',
+          'B': '\U0001D539',
+          'C': '\u2102',
+          'D': '\U0001D53B',
+          'E': '\U0001D53C',
+          'F': '\U0001D53D',
+          'G': '\U0001D53E',
+          'H': '\u210D',
+          'I': '\U0001D540',
+          'J': '\U0001D541',
+          'K': '\U0001D542',
+          'L': '\U0001D543',
+          'M': '\U0001D544',
+          'N': '\u2115',
+          'O': '\U0001D546',
+          'P': '\u2119',
+          'Q': '\u211A',
+          'R': '\u211D',
+          'S': '\U0001D54A',
+          'T': '\U0001D54B',
+          'U': '\U0001D54C',
+          'V': '\U0001D54D',
+          'W': '\U0001D54E',
+          'X': '\U0001D54F',
+          'Y': '\U0001D550',
+          'Z': '\u2124'}
 
-negatables = {'=': u'\u2260',
-              '\in': u'\u2209',
-              '\equiv': u'\u2262'}
+negatables = {'=': '\u2260',
+              '\in': '\u2209',
+              '\equiv': '\u2262'}
 
 
 def handle_keyword(name, node, string):
